@@ -6,7 +6,7 @@ public class BaziMafia {
 
 
     public static void main(String[] args) {
-        Adminestrator x = new Adminestrator();
+        Adminestrator x = Adminestrator.getInstance();
         x.get_command();
     }
     

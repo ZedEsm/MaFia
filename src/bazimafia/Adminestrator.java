@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Adminestrator {
-    boolean Day_Or_Night;
-    int Day_Counter;
-    int Night_Counter;
+    boolean Day_Or_Night;//agar day=true agar night=false
+    int Day_Counter=0;
+    int Night_Counter=0;
     ArrayList Players = new ArrayList();
     Joker joker = null;
     int mafia_counter=0;
@@ -23,14 +23,21 @@ public class Adminestrator {
     boolean errorflag=false;
     int num_of_assign_role=0;
     boolean game_started=false;
-    public Adminestrator() {
-        
-        
+    static Adminestrator Instance = null;
+    public static Adminestrator getInstance(){
+        if(Instance==null){
+            Instance=new Adminestrator();
+        }
+        return Instance;
+    }
+    private Adminestrator() {
+ 
     }
     
     public void get_command(){
          Scanner scanner = new Scanner(System.in);
-         while(true){
+         boolean flag_end_of_game=false;
+         while(flag_end_of_game==false){
             String command ;
 
             command=scanner.nextLine();
@@ -53,9 +60,51 @@ public class Adminestrator {
             else if(command.startsWith("start_game")){
               
                  start_game();
-                   
+            }
+            else if(command.startsWith("end_vote")){
+                 Day_Or_Night=false;
                 
-            } 
+                if(Day_Or_Night==false){
+                   int Max=((Player)Players.get(0)).VoteCounter;
+                   int index = 0;
+                   boolean flag1=false;//braye jologiri az tekrar khat 76
+                    for (int i = 1; i <Players.size(); i++){
+                        if(Max < ((Player)Players.get(i)).VoteCounter){
+                            Max=((Player)Players.get(i)).VoteCounter;
+                            index=i;
+                            
+                        }
+                        if(Max == ((Player)Players.get(i)).VoteCounter){
+                            System.out.println("nobody died");
+                            flag1=true;
+                            break;
+                        }
+                    }
+                    if(flag1==false){
+                        ((Player)Players.get(index)).LiveStatus = false;
+                        
+                        if(((Player)Players.get(index)) instanceof Joker){
+                             if(Day_Or_Night==true){
+                                 System.out.println("Joker won!");
+                                 flag_end_of_game=true;
+                             }
+                        }
+                        else{
+                             System.out.println(((Player)Players.get(index)).Name+" died");
+                        }
+                    }
+                    
+                }
+                Night_Counter++;
+      
+                System.out.println("Night "+Night_Counter);
+            }
+            else if(command.startsWith("end_night")){
+                    Day_Counter++;
+                    System.out.println("Day "+Day_Counter);
+                    //kamel nist be safhe 7 highlight morajee shavad
+            }
+            
          }
     }
     public void start_game(){
@@ -108,6 +157,8 @@ public class Adminestrator {
                     }
                     System.out.println("\nReady? Set! Go.");
                      game_started=true;
+                     Day_Counter++;
+                     System.out.println("Day "+Day_Counter);
                }
                   }
               }
@@ -125,7 +176,7 @@ public class Adminestrator {
             errorflag=true;
         }
         else{
-             errorflag=false;
+             errorflag=false;//role gereftan
         }
 
    
@@ -192,8 +243,19 @@ public class Adminestrator {
                         bulletproof_counter++;
                     }
                     else if(role_name.equalsIgnoreCase("Joker")){
+                        boolean flagj= false;
+                        for (int i = 0; i <Players.size(); i++) {
+                            if(Players.get(i) instanceof Joker){
+                              flagj=true;
+                              break;
+                            }
+                        }
+                        if(flagj==false){
                         joker=new Joker( player_name);
-                    }
+                        Players.add(joker);
+                        }
+                    } 
+                        
                     num_of_assign_role++;
                 }
             }
@@ -207,6 +269,8 @@ public class Adminestrator {
     }
     public String End_Night(){
         return null;
+    }
+    public void wakeup(Player cc){
     }
     public String Wakeup_List(){
         return null;
