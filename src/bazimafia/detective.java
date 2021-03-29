@@ -15,70 +15,51 @@ public class detective extends villager{
     }
     
  
-    public String  Take_Role(){
-        Scanner scanner = new Scanner(System.in);
-        String bazikonan=scanner.nextLine();
-        bazikonan = bazikonan.trim();
-        bazikon=bazikonan.split(" ");
-        Adminestrator adm = Adminestrator.getInstance();
+    public String  Take_Role(int detective_index,String name2){
+         Adminestrator adm1 = Adminestrator.getInstance();
+         ArrayList list=adm1.Players;
    
-        
+         detective d = (detective)list.get(detective_index);
+        if(d.LiveStatus==false){
+            return "user is dead";  
+        }
         if(counter_stelam==0){
-            ArrayList list=adm.Players;
-        boolean flag=false;
-        for (int i = 0; i < list.size(); i++) {
-            Player p = (Player)list.get(i);
-            if(p.Name.equals(bazikon[0])){
-                if(p instanceof detective){
+            boolean flag=false;
+            for (int i = 0; i < list.size(); i++) {
+                Player p = (Player)list.get(i);
+                if(p.Name.equals(name2)){
                     flag=true;
-                    break;
-                }
-                else{
-                    counter_stelam++;
-                    return "";
-                }
-            }
-            
-        }
-        if(flag==false){
-            counter_stelam++;
-           return "user not found";
-        }
-        flag=false;
-        for (int i = 0; i < list.size(); i++) {
-            Player p = (Player)list.get(i);
-            if(p.Name.equals(bazikon[1])){
-                flag=true;
-                if(p.LiveStatus==false){
-                    counter_stelam++;
-                    return "suspect is dead";
-                }
-                else{
-                    if(p instanceof godfather){
+                    if(p.LiveStatus==false){
                         counter_stelam++;
-                         return "No";
+                        return "suspect is dead";
                     }
-                    else if(p instanceof mafia){
-                        counter_stelam++;
-                        return "Yes";
-                    }
-                    else {
-                        counter_stelam++;
-                        return "No";
+                    else{
+                        if(p instanceof godfather){
+                            counter_stelam++;
+                             return "No";
+                        }
+                        else if(p instanceof mafia){
+                            counter_stelam++;
+                            return "Yes";
+                        }
+                        else {
+                            counter_stelam++;
+                            return "No";
+                        }
                     }
                 }
             }
-        }
-        if(flag==false){
+            if(flag==false){
+                counter_stelam++;
+               return "user not found";
+            }
             counter_stelam++;
-           return "user not found";
-        }
-        counter_stelam++;
-        return "";
-      }
-      else{
-            return "etective has already asked";
-        }
+            return "";
+       }
+       else{
+         counter_stelam++;  
+         return "etective has already asked";
+       }
     }
 }
 

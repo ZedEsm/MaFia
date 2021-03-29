@@ -9,7 +9,7 @@ public class Adminestrator {
     int Day_Counter=0;
     int Night_Counter=0;
     ArrayList Players = new ArrayList();
-    Joker joker = null;
+ 
     int mafia_counter=0;
     int detective_counter=0;
     int bulletproof_counter=0;
@@ -62,9 +62,9 @@ public class Adminestrator {
                  start_game();
             }
             else if(command.startsWith("end_vote")){
-                 Day_Or_Night=false;
                 
-                if(Day_Or_Night==false){
+                
+                if(Day_Or_Night==true){
                    int Max=((Player)Players.get(0)).VoteCounter;
                    int index = 0;
                    boolean flag1=false;//braye jologiri az tekrar khat 76
@@ -97,12 +97,90 @@ public class Adminestrator {
                 }
                 Night_Counter++;
       
-                System.out.println("Night "+Night_Counter);
+                System.out.println("Night "+Night_Counter);//shoro
+                Day_Or_Night=false;
+               for (int i = 0; i < Players.size(); i++) {
+                    Player p = (Player)Players.get(i);
+                        if(p instanceof mafia){
+                            if(((mafia) p).LiveStatus==true){
+               
+                              System.out.println(p.Name+": mafia");
+                            }
+                        }
+                        else if(p instanceof silencer){
+                            if(((silencer) p).LiveStatus==true){
+                              System.out.println(p.Name+": silencer");
+                            }
+                        }
+                        else if(p instanceof godfather){
+                            if(((godfather) p).LiveStatus==true){
+                              System.out.println(p.Name+": godfather");
+                            }
+                        }
+//                       else if(Players.get(i).getClass().toString().endsWith("villager")){
+//
+//                            System.out.println(p.Name+": villager");
+//                       }
+                       else if(p instanceof godfather){
+                           if(((godfather) p).LiveStatus==true){
+                             System.out.println(p.Name+": doctor");
+                           }
+                       }
+////                        else if(Players.get(i).getClass().toString().endsWith("bulletproof")){
+////                            bulletproof obj =(bulletproof)Players.get(i);
+////                            System.out.println(obj.Name+": bulletproof");
+////                        }
+                        else if(p instanceof detective){
+                            if(((detective) p).LiveStatus==true){
+                            System.out.println(p.Name+": detective");
+                            }
+                        }
+////                       
+////                      
+////                        
+                    }
+                
+                    Scanner scanner1 = new Scanner(System.in);
+                    String vorodi = scanner1.nextLine();
+                    vorodi=vorodi.trim();
+                    String bazikon[]=vorodi.split(" ");
+                    ArrayList list=Players;
+                    for (int i = 0; i < list.size(); i++) {
+                        Player p = (Player)list.get(i);
+                        if(p.Name.equals(bazikon[0])){
+                            if(p instanceof silencer){
+                                silencer s1 = new silencer(bazikon[0]);
+                                System.out.println(s1.Silent(i,bazikon[1]));
+                                break;
+                            }
+                            else if(p instanceof detective){
+                                detective d1 = new detective(bazikon[0]);
+                                System.out.println(d1.Take_Role(i,bazikon[1]));
+                                break;
+
+                            }
+                            else if(p instanceof doctor){
+
+                            }
+                            else if(p instanceof mafia){
+
+                            }
+                            else{
+                                System.out.println("user can not wake up during night"); 
+                                        
+                            }
+                        }
+                    }
+                    
+
+//                
             }
             else if(command.startsWith("end_night")){
                     Day_Counter++;
                     System.out.println("Day "+Day_Counter);
                     //kamel nist be safhe 7 highlight morajee shavad
+                    System.out.println(new Player().Vote());
+                   
             }
             
          }
@@ -118,47 +196,50 @@ public class Adminestrator {
                       System.out.println("one or more player do not have a role");
                   }
                   else{
-                for (int i = 0; i < Players.size(); i++) {
-                        if(Players.get(i).getClass().toString().endsWith("mafia")){
+                    for (int i = 0; i < Players.size(); i++) {
+                        if(Players.get(i) instanceof mafia){
                             mafia obj=(mafia)Players.get(i);
                             System.out.println(obj.Name+": mafia");
                         }
-                        else if(Players.get(i).getClass().toString().endsWith("silencer")){
+                        else if(Players.get(i) instanceof silencer){
                             silencer obj =(silencer)Players.get(i);
                             System.out.println(obj.Name+": silencer");
                         }
-                        else if(Players.get(i).getClass().toString().endsWith("godfather")){
+                        else if(Players.get(i) instanceof godfather){
                             godfather obj =(godfather)Players.get(i);
                             System.out.println(obj.Name+": godfather");
                         }
-                        else if(Players.get(i).getClass().toString().endsWith("villager")){
+                        else if(Players.get(i) instanceof villager){
                             villager obj =(villager)Players.get(i);
                             System.out.println(obj.Name+": villager");
                         }
-                        else if(Players.get(i).getClass().toString().endsWith("doctor")){
+                        else if(Players.get(i) instanceof doctor){
                             doctor obj =(doctor)Players.get(i);
                             System.out.println(obj.Name+": doctor");
                         }
-                        else if(Players.get(i).getClass().toString().endsWith("bulletproof")){
+                        else if(Players.get(i) instanceof bulletproof){
                             bulletproof obj =(bulletproof)Players.get(i);
                             System.out.println(obj.Name+": bulletproof");
                         }
-                        else if(Players.get(i).getClass().toString().endsWith("detective")){
+                        else if(Players.get(i) instanceof detective){
                             detective obj =(detective)Players.get(i);
                             System.out.println(obj.Name+": detective");
+                        }
+                         else if(Players.get(i) instanceof Joker){
+                            Joker obj =(Joker)Players.get(i);
+                            System.out.println(obj.Name+": Joker");
                         }
                        
                       
                         
                     }
           
-                    if(joker!=null){
-                       System.out.println(joker.Name+": Joker");
-                    }
                     System.out.println("\nReady? Set! Go.");
                      game_started=true;
                      Day_Counter++;
+                     Day_Or_Night=true;
                      System.out.println("Day "+Day_Counter);
+                     System.out.println(new Player().Vote());
                }
                   }
               }
@@ -192,12 +273,12 @@ public class Adminestrator {
             boolean flag = false;
             for (int i = 0; i < player_names.length; i++) {
                 if( player_name.equalsIgnoreCase(player_names[i])){
-                    flag=true;  
+                    flag=true;  //agar nabod az haghe byron myomad
                     break;
                 }
                 
             }
-            if(flag==false){
+            if(flag==false){//agar adame peyda nashod
                 System.out.println("user not found");
                  errorflag=true;
             }
@@ -251,7 +332,7 @@ public class Adminestrator {
                             }
                         }
                         if(flagj==false){
-                        joker=new Joker( player_name);
+                        Joker joker=new Joker( player_name);
                         Players.add(joker);
                         }
                     } 

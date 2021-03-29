@@ -14,7 +14,8 @@ public class Player {
     public Player(String Name){
         this.Name=Name;
     }
-   public String Vote(){
+    public Player(){}
+    public String Vote(){
         String bazikon[];
        
         Scanner scanner = new Scanner(System.in);
@@ -62,7 +63,7 @@ public class Player {
            return "user not found";
         }
       
-        return "";
+       return "";
       
 
     }
