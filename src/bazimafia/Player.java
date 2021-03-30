@@ -6,29 +6,23 @@ import java.util.Scanner;
 
 
 public class Player {
-   // boolean Day_Or_
+    boolean time_of_being_killed=false;//false bashe yani shab morde true bashe roz morde
+    boolean tried_to_kill=false;
     boolean LiveStatus=true;
     boolean SilentStatus=false;
     public  String Name;
-    int VoteCounter;
+    int VoteCounter=0;
     public Player(String Name){
         this.Name=Name;
     }
     public Player(){}
-    public String Vote(){
-        String bazikon[];
-       
-        Scanner scanner = new Scanner(System.in);
-        String bazikonan=scanner.nextLine();
-        bazikonan = bazikonan.trim();
-        bazikon=bazikonan.split(" ");
+    public String Vote(String voter,String votee){
         Adminestrator adm = Adminestrator.getInstance();
-   
         ArrayList list = adm.Players;
         boolean flag=false;
         for (int i = 0; i < list.size(); i++) {
             Player p = (Player)list.get(i);
-            if(p.Name.equals(bazikon[0])){
+            if(p.Name.equals(voter)){
                 flag=true;
                 if(p.LiveStatus==false){
                      return "voter already dead";
@@ -48,12 +42,13 @@ public class Player {
         flag=false;
         for (int i = 0; i < list.size(); i++) {
             Player p = (Player)list.get(i);
-            if(p.Name.equals(bazikon[1])){
+            if(p.Name.equals(votee)){
                 flag=true;
                 if(p.LiveStatus==false){
                     
                    return "votee already dead";
                 }
+             
                 p.VoteCounter++;
                 break;
             }

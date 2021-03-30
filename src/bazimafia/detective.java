@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class detective extends villager{
+public class detective extends Player{
       String bazikon[];
       int counter_stelam=0;
       

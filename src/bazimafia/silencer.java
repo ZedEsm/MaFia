@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class silencer extends mafia {
+public class silencer extends Player {
   
     
     public silencer(String Name) {
