@@ -23,6 +23,7 @@ public class detective extends Player{
         if(d.LiveStatus==false){
             return "user is dead";  
         }
+      
         if(counter_stelam==0){
             boolean flag=false;
             for (int i = 0; i < list.size(); i++) {
@@ -57,8 +58,9 @@ public class detective extends Player{
             return "";
        }
        else{
+        
          counter_stelam++;  
-         return "etective has already asked";
+         return "detective has already asked";
        }
     }
 }

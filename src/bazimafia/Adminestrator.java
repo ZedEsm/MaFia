@@ -21,6 +21,7 @@ public class Adminestrator {
     int villager_counter=0;
     boolean create_game_command=false;
     String player_names[];
+    String res1="";//natije ray giri mafia dar shab
     String roles_list[]={"Joker","detective","bulletproof","doctor","godfather","mafia","silencer","villager"};
     boolean errorflag=false;//role nadaran
     int num_of_assign_role=0;
@@ -68,26 +69,11 @@ public class Adminestrator {
                  
             }
             else if(command.startsWith("end_night")){
-                    Day_Counter++;
-                    System.out.println("Day "+Day_Counter);
-                    //kamel nist be safhe 7 highlight morajee shavad
-                    boolean flg = false;
-                              String bazikon[];
-                             // Scanner scanner = new Scanner(System.in);
-                            while(flg==false){
-                                String bazikonan=scanner.nextLine();
-                                if(bazikonan.equals("end_vote")){
-                                    flg=true;
-                                    End_Vote();
-                                }
-                                else{
-                                    bazikonan = bazikonan.trim();
-                                    bazikon=bazikonan.split(" ");
-
-                                    System.out.println(new Player().Vote(bazikon[0],bazikon[1]));
-                                }
-                            }
+              End_Night();
                    
+            }
+            else if(command.startsWith("get_game_state")){
+                Get_Games_State();
             }
             
          }
@@ -141,6 +127,7 @@ public class Adminestrator {
                         }
                             System.out.println("\nReady? Set! Go.");
                             game_started=true;
+                            init_day();
                             Day_Counter++;
                             Day_Or_Night=true;
                             System.out.println("Day "+Day_Counter);
@@ -268,19 +255,19 @@ public class Adminestrator {
     public void End_Vote(){
         
         if(Day_Or_Night==true){
-                   int Max=((Player)Players.get(0)).VoteCounter;
+                   int Max=((Player)Players.get(0)).day_VoteCounter;
                    int index = 0;
                    boolean flag1=false;//braye jologiri az tekrar khat 76
                     for (int i = 1; i <Players.size(); i++){
-                        if(Max < ((Player)Players.get(i)).VoteCounter){
-                            Max=((Player)Players.get(i)).VoteCounter;
+                        if(Max < ((Player)Players.get(i)).day_VoteCounter){
+                            Max=((Player)Players.get(i)).day_VoteCounter;
                             index=i;//shomare max bara ki bode
                             
                         }              
                     }
                     int equalvote=0;
                     for (int i = 0; i <Players.size(); i++){
-                        if(Max == ((Player)Players.get(i)).VoteCounter){
+                        if(Max == ((Player)Players.get(i)).day_VoteCounter){
                           
                             equalvote++;
                         }
@@ -376,54 +363,234 @@ public class Adminestrator {
 ////                      
 ////                        
                     }
-                
-                    Scanner scanner1 = new Scanner(System.in);
-                    String vorodi = scanner1.nextLine();
-                    vorodi=vorodi.trim();
-                    String bazikon[]=vorodi.split(" ");
-                    ArrayList list=Players;
-                    for (int i = 0; i < list.size(); i++) {
-                        Player p = (Player)list.get(i);
-                        if(p.Name.equals(bazikon[0])){
-                            if(p instanceof silencer){
-                                silencer s1 = new silencer(bazikon[0]);
-                                System.out.println(s1.Silent(i,bazikon[1]));
-                                break;
-                            }
-                            else if(p instanceof detective){
-                                detective d1 = new detective(bazikon[0]);
-                                System.out.println(d1.Take_Role(i,bazikon[1]));
-                                break;
+                    boolean night_actions=false;
+     
+                    while(night_actions==false){
+                        
+                        Scanner scanner1 = new Scanner(System.in);
+                        String vorodi = scanner1.nextLine();
+                        vorodi=vorodi.trim();
+                        if(vorodi.equals("end_night")){
+                            night_actions=true;
+                            End_Night();
+                            
+                        }
+                        else{
+                        
+                            String bazikon[]=vorodi.split(" ");
+                            ArrayList list=Players;
+                            for (int i = 0; i < list.size(); i++) {
+                                Player p = (Player)list.get(i);
+                                if(p.Name.equals(bazikon[0])){
+                                    if(p instanceof silencer){
+                                        silencer s1 = (silencer)p;
+                                        System.out.println(s1.Silent(i,bazikon[1]));
+                                        break;
+                                    }
+                                    else if(p instanceof detective){
+                                        detective d1 = (detective)p;
+                                        System.out.println(d1.Take_Role(i,bazikon[1]));
+                                        break;
 
-                            }
-                            else if(p instanceof doctor){
+                                    }
+//                                    else if(p instanceof doctor){
+//                                        doctor d = (doctor)p;
+//                                        System.out.println(d.to_save(i,bazikon[1]));
+//
+//                                    }
+                                    else if((p instanceof mafia)|| (p instanceof silencer) || (p instanceof godfather)){
+                                        mafia m1 = new mafia(bazikon[0]);
+                                        String c =m1.Vote_During_Night(i,bazikon[1]);
+                                        if (c.indexOf("->")==-1){
+                                            System.out.println(c);
+                                            break;
+                                        }
+                                        else{
+                                            res1+=c;
+                                        }
+                                       
 
-                            }
-                            else if(p instanceof mafia){
-                                mafia m1 = new mafia(bazikon[0]);
-                                System.out.println(m1.Vote_During_Night(i,bazikon[1]));
-                                break;
+                                    }
+                                    else{
+                                        System.out.println("user can not wake up during night"); 
 
-                            }
-                            else{
-                                System.out.println("user can not wake up during night"); 
-                                        
+                                    }
+                                }
                             }
                         }
                     }
-                    
 
 //               
     }
-    public String End_Night(){
-        return null;
+    public void End_Night(){
+
+                String temp_res=res1.trim();
+                String voters="";
+                while(temp_res.length()>0){
+                    int idx1 = temp_res.lastIndexOf("]");
+  
+                    int idx2 = temp_res.lastIndexOf("]",idx1-1);
+ 
+                    String element="";
+                    if(idx2>=0){
+                        element=temp_res.substring(idx2+1,idx1);
+                        temp_res=temp_res.substring(0,idx2+1);
+                    }
+                    else{
+                        element=temp_res.substring(0,idx1);
+                        temp_res="";
+                    }
+                    String current_element[]=element.split("->");
+                    if(voters.indexOf(current_element[0])<0){
+                       voters+=current_element[0]+","; 
+                       int current_index=Integer.parseInt(current_element[1]);
+                       ((Player)Players.get(current_index)).nigth_VoteCounter++;
+                    }
+                }
+                mafia nm = new mafia("killer");
+                nm.kill();
+         
+                
+                
+                Day_Counter++;
+                System.out.println("Day "+Day_Counter);
+                report();
+                init_day();
+                
+                int number_of_mafias= mafia_counter+godfather_counter+silencer_counter;
+                int number_of_villagers=villager_counter+detective_counter+doctor_counter+bulletproof_counter;
+                if(number_of_mafias==0){
+                    System.out.println("Villagers won!");
+                    System.exit(0);
+                }
+                else if(number_of_villagers<=number_of_mafias){
+                    System.out.println("Mafia won!");
+                    System.exit(0);
+                }
+                
+                    //kamel nist be safhe 7 highlight morajee shavad
+                boolean flg = false;
+                String bazikon[];
+                Scanner scanner = new Scanner(System.in);
+                             
+                while(flg==false){
+                        String bazikonan=scanner.nextLine();
+                        if(bazikonan.equals("end_vote")){
+                            flg=true;
+                            End_Vote();
+                        }
+                        else{
+                            bazikonan = bazikonan.trim();
+                            bazikon=bazikonan.split(" ");
+
+                            System.out.println(new Player().Vote(bazikon[0],bazikon[1]));
+                        }
+                }
+       
     }
-//    public void wakeup(Player cc){
-//    }
-//    public String Wakeup_List(){
-//        return null;
-//    }
-    public int Get_Games_State(){
-        return 0;
+
+    public String Get_Games_State(){
+       int number_of_mafias= mafia_counter+godfather_counter+silencer_counter;
+       int number_of_villagers=villager_counter+detective_counter+doctor_counter+bulletproof_counter;
+        return "Mafia = "+number_of_mafias+"\nVillager = "+number_of_villagers;
     }
+    public  void init_day(){//meghdar dehi avalie be rooz
+        
+                      for (int i = 0; i < Players.size(); i++) {
+                        if(Players.get(i) instanceof mafia){
+                            mafia obj=(mafia)Players.get(i);
+                            obj.day_VoteCounter=0;
+                            obj.nigth_VoteCounter=0;
+                            if(Day_Counter-obj.Silent_Day==2){
+                              obj.SilentStatus=false;
+                            }
+
+                        }
+                        else if(Players.get(i) instanceof silencer){
+                            silencer obj =(silencer)Players.get(i);
+                            obj.counter_silent_kardan=0;
+                            obj.day_VoteCounter=0;
+                            obj.nigth_VoteCounter=0;
+                            if(Day_Counter-obj.Silent_Day==2){
+                              obj.SilentStatus=false;
+                            }
+
+                        }
+                        else if(Players.get(i) instanceof godfather){
+                            godfather obj =(godfather)Players.get(i);
+                            obj.day_VoteCounter=0;
+                            obj.nigth_VoteCounter=0;
+                            if(Day_Counter-obj.Silent_Day==2){
+                              obj.SilentStatus=false;
+                            }
+
+                        }
+                        else if(Players.get(i) instanceof villager){
+                            villager obj =(villager)Players.get(i);
+                            obj.day_VoteCounter=0;
+                            obj.nigth_VoteCounter=0;
+                            if(Day_Counter-obj.Silent_Day==2){
+                              obj.SilentStatus=false;
+                            }
+
+                        }
+                        else if(Players.get(i) instanceof doctor){
+                            doctor obj =(doctor)Players.get(i);
+                            obj.counter_save=0;
+                            obj.day_VoteCounter=0;
+                            obj.nigth_VoteCounter=0;
+                            if(Day_Counter-obj.Silent_Day==2){
+                              obj.SilentStatus=false;
+                            }
+
+                        }
+                        else if(Players.get(i) instanceof bulletproof){
+                            bulletproof obj =(bulletproof)Players.get(i);
+                            obj.day_VoteCounter=0;
+                            obj.nigth_VoteCounter=0;
+                            if(Day_Counter-obj.Silent_Day==2){
+                              obj.SilentStatus=false;
+                            }
+
+                        }
+
+                         else if(Players.get(i) instanceof Joker){
+                            Joker obj =(Joker)Players.get(i);
+                            obj.day_VoteCounter=0;
+                            obj.nigth_VoteCounter=0;
+                            if(Day_Counter-obj.Silent_Day==2){
+                              obj.SilentStatus=false;
+                            }
+                           
+
+                        }
+                        else if(Players.get(i) instanceof detective){
+                            detective obj=(detective)Players.get(i);
+                            obj.counter_stelam=0;
+                            obj.day_VoteCounter=0;
+                            obj.nigth_VoteCounter=0;
+                            if(Day_Counter-obj.Silent_Day==2){
+                              obj.SilentStatus=false;
+                            }
+
+                        }
+                       
+                        }
+    }
+    public void report(){
+          for (int i = 0; i < Players.size(); i++) {
+                Player obj=(Player)Players.get(i);
+                if(obj.tried_to_kill==true){
+                    System.out.println("mafia tried to kill "+obj.Name);
+                }
+                if(obj.LiveStatus==false){
+                    System.out.println(obj.Name+" was killed");
+                }
+                if(obj.SilentStatus==true){
+                   
+                       System.out.println("Silenced "+obj.Name);
+                }
+          }
+    }
+   
 }

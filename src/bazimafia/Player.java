@@ -8,10 +8,13 @@ import java.util.Scanner;
 public class Player {
     boolean time_of_being_killed=false;//false bashe yani shab morde true bashe roz morde
     boolean tried_to_kill=false;
+    
     boolean LiveStatus=true;
     boolean SilentStatus=false;
+    int Silent_Day=0;
     public  String Name;
-    int VoteCounter=0;
+    int day_VoteCounter=0;
+    int nigth_VoteCounter=0;
     public Player(String Name){
         this.Name=Name;
     }
@@ -49,7 +52,7 @@ public class Player {
                    return "votee already dead";
                 }
              
-                p.VoteCounter++;
+                p.day_VoteCounter++;
                 break;
             }
         }
